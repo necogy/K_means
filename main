@@ -1,0 +1,25 @@
+import random
+import math
+from statistics import mean
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets.samples_generator import make_blobs
+from numpy import empty
+from k_means_algorithm import *
+
+k, center, iteration  = 1000, 5, 1000
+X, y = make_blobs(n_samples=k, centers=center, random_state=0)
+ax = sns.scatterplot(x=[x[0] for x in X], y=[x[1] for x in X], hue=y, alpha=0.65)
+plt.show()
+
+# pick up the points
+centroids = random.sample(list(X), center)
+dict_centroids = dict(enumerate(centroids))
+updated_set = empty(k)
+
+for iter in range(iteration):
+    updated_set = calc_points(X, dict_centroids, updated_set)
+    dict_centroids = recal_center(X, updated_set, dict_centroids)
+
+plotting(X, updated_set)
+plotting(X, y)
