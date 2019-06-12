@@ -1,0 +1,40 @@
+import random
+import math
+import operator
+import numpy as np
+from statistics import mean
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets.samples_generator import make_blobs
+from numpy import empty
+
+def distance_calculation(dot1, dot2):
+    distance = math.sqrt(math.pow(dot1[0]-dot2[0], 2) + math.pow(dot1[1]-dot2[1], 2))
+    return distance
+
+#calculate the distance between the picked-up dots and the other dots
+def categorization(dot, dict_centroids):
+    distance_set = {}
+    for key in dict_centroids.keys():
+        distance_set[key] = distance_calculation(dict_centroids[key], dot)
+    min_key = min(distance_set, key=lambda k: distance_set[k])
+
+    return min_key
+
+def calc_points(dots, dict_centroids, updated_set):
+    for i in range(len(dots)):
+        dot = dots[i]
+        key = categorization(dot, dict_centroids)
+        updated_set[i] = key
+    return updated_set
+
+
+def recal_center(dots, updated_set, dict_centroids):
+    for key in dict_centroids.keys():
+        selected_group = [k for i, k in enumerate(dots) if updated_set[i] ==key]
+        dict_centroids[key] = (mean([x[0] for x in selected_group]), mean([x[1] for x in selected_group]))
+    return dict_centroids
+
+def plotting(dots, updated_set):
+    ax = sns.scatterplot(x=[x[0] for x in dots], y=[x[1] for x in dots], hue= updated_set)
+    plt.show()
